@@ -2,7 +2,9 @@ package org.example.supermarket.application.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.supermarket.domain.entity.Category;
+import org.example.supermarket.domain.exception.BadRequestException;
 import org.example.supermarket.domain.exception.CategoryNotFoundException;
+import org.example.supermarket.domain.repository.CategoryRepository;
 import org.example.supermarket.utils.ErrorCatalog;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +13,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
-    private final org.example.supermarket.domain.repository.CategoryRepository repository;
+    private final CategoryRepository repository;
 
     @Override
     public List<Category> findAll() {
@@ -22,7 +24,7 @@ public class CategoryServiceImpl implements CategoryService {
     public Category findById(Integer id) {
         return repository.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException(
-                        ErrorCatalog.CATEGORY_NOT_FOUND.getMessage()));
+                        ErrorCatalog.RESOURCE_NOT_FOUND.getMessage()));
     }
 
     @Override
@@ -42,7 +44,7 @@ public class CategoryServiceImpl implements CategoryService {
                     return repository.save(savedCategory);
                 })
                 .orElseThrow(() -> new CategoryNotFoundException(
-                        ErrorCatalog.CATEGORY_NOT_FOUND.getMessage()));
+                        ErrorCatalog.RESOURCE_NOT_FOUND.getMessage()));
     }
 
     @Override
@@ -52,9 +54,11 @@ public class CategoryServiceImpl implements CategoryService {
 
     private void validateCategoryFields(Category category) {
         if (category.getCategoryName() == null || category.getCategoryName().isBlank()) {
-            throw new IllegalArgumentException(ErrorCatalog
-                    .GENERIC_ILLEGAL_ARGUMENT.getMessage());
+            throw new BadRequestException(ErrorCatalog.BAD_REQUEST.getMessage());
+        }
 
+        if (category.getDescription() == null || category.getDescription().isBlank()) {
+            throw new BadRequestException(ErrorCatalog.BAD_REQUEST.getMessage());
         }
     }
 }

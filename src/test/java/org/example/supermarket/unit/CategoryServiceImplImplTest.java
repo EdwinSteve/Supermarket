@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.assertj.core.api.Assertions;
 import org.example.supermarket.application.service.CategoryServiceImpl;
 import org.example.supermarket.domain.entity.Category;
+import org.example.supermarket.domain.exception.BadRequestException;
 import org.example.supermarket.domain.exception.CategoryNotFoundException;
 import org.example.supermarket.utils.ErrorCatalog;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class CategoryServiceImplImplTest {
             service.create(category);
             Category found = service.findById(1000);})
                 .isInstanceOf(CategoryNotFoundException.class)
-                .hasMessage(ErrorCatalog.CATEGORY_NOT_FOUND.getMessage());
+                .hasMessage(ErrorCatalog.RESOURCE_NOT_FOUND.getMessage());
     }
 
     @Test
@@ -54,8 +55,8 @@ public class CategoryServiceImplImplTest {
                 .build();
 
         Assertions.assertThatThrownBy(() -> service.create(category))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(ErrorCatalog.GENERIC_ILLEGAL_ARGUMENT.getMessage());
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage(ErrorCatalog.BAD_REQUEST.getMessage());
     }
 
     @Test
@@ -66,8 +67,33 @@ public class CategoryServiceImplImplTest {
                 .build();
 
         Assertions.assertThatThrownBy(() -> service.create(category))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(ErrorCatalog.GENERIC_ILLEGAL_ARGUMENT.getMessage());
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage(ErrorCatalog.BAD_REQUEST.getMessage());
+    }
+
+    @Test
+    public void shouldThrowIllegalArgumentSaveCategoryWithBlankDescription() {
+        Category category = Category.builder()
+                .categoryName("Seafood")
+                .categoryPicture("")
+                .description("")
+                .build();
+
+        Assertions.assertThatThrownBy(() -> service.create(category))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage(ErrorCatalog.BAD_REQUEST.getMessage());
+    }
+
+    @Test
+    public void shouldThrowIllegalArgumentSaveCategoryWithNullDescription() {
+        Category category = Category.builder()
+                .categoryName("Seafood")
+                .categoryPicture("")
+                .build();
+
+        Assertions.assertThatThrownBy(() -> service.create(category))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage(ErrorCatalog.BAD_REQUEST.getMessage());
     }
 
     @Test

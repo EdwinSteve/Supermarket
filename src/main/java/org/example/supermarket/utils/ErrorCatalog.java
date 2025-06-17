@@ -4,8 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum ErrorCatalog {
-    GENERIC_ILLEGAL_ARGUMENT("ERR02GE", "Illegal argument!"),
-    CATEGORY_NOT_FOUND("ERR01CA", "Category not found!");
+    BAD_REQUEST("ERR400BR", "Bad Request!"),
+    RESOURCE_NOT_FOUND("ERR404RNF", "Resource not found!");
 
     private final String code;
     private final String message;
