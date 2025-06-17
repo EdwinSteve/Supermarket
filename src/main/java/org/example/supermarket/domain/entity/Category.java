@@ -1,4 +1,4 @@
-package org.example.supermarket.infrastructure.persistence.model;
+package org.example.supermarket.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,17 +7,17 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "categories")
-public class CategoryEntity {
+public class Category {
     @Column(name = "id_category")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

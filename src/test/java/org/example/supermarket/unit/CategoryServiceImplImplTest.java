@@ -2,9 +2,9 @@ package org.example.supermarket.unit;
 
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.Assertions;
-import org.example.supermarket.application.service.CategoryService;
+import org.example.supermarket.application.service.CategoryServiceImpl;
+import org.example.supermarket.domain.entity.Category;
 import org.example.supermarket.domain.exception.CategoryNotFoundException;
-import org.example.supermarket.domain.pojos.Category;
 import org.example.supermarket.utils.ErrorCatalog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Test;
 
 @SpringBootTest
 @Transactional
-public class CategoryServiceImplTest {
+public class CategoryServiceImplImplTest {
     @Autowired
-    private CategoryService service;
+    private CategoryServiceImpl service;
 
     @Test
     public void shouldReturnCategoryWhenIdExists() {
