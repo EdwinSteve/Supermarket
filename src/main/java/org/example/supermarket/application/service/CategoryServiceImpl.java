@@ -1,8 +1,9 @@
 package org.example.supermarket.application.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.supermarket.application.dto.CategoryDto;
+import org.example.supermarket.application.mapper.CategoryMapper;
 import org.example.supermarket.domain.entity.Category;
-import org.example.supermarket.domain.exception.BadRequestException;
 import org.example.supermarket.domain.exception.CategoryNotFoundException;
 import org.example.supermarket.domain.repository.CategoryRepository;
 import org.example.supermarket.utils.ErrorCatalog;
@@ -14,51 +15,47 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository repository;
+    private final CategoryMapper mapper;
 
     @Override
-    public List<Category> findAll() {
-        return repository.findAll();
+    public List<CategoryDto> findAll() {
+        return mapper.toDtoList(repository.findAll());
     }
 
     @Override
-    public Category findById(Integer id) {
+    public CategoryDto findById(Integer id) {
+        return mapper.toDto(repository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException(
+                        ErrorCatalog.CATEGORY_NOT_FOUND.getMessage())));
+    }
+
+    @Override
+    public Category getById(Integer id) {
         return repository.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException(
-                        ErrorCatalog.RESOURCE_NOT_FOUND.getMessage()));
+                        ErrorCatalog.CATEGORY_NOT_FOUND.getMessage()));
     }
 
     @Override
-    public Category create(Category category) {
-        validateCategoryFields(category);
-        return repository.save(category);
+    public CategoryDto create(CategoryDto category) {
+        return mapper.toDto(repository.save(mapper.toEntity(category)));
     }
 
     @Override
-    public Category update(Integer id, Category category) {
-        return repository.findById(id)
+    public CategoryDto update(Integer id, CategoryDto category) {
+        return mapper.toDto(repository.findById(id)
                 .map(savedCategory -> {
-                    validateCategoryFields(category);
                     savedCategory.setCategoryName(category.getCategoryName());
                     savedCategory.setCategoryPicture(category.getCategoryPicture());
                     savedCategory.setDescription(category.getDescription());
                     return repository.save(savedCategory);
                 })
                 .orElseThrow(() -> new CategoryNotFoundException(
-                        ErrorCatalog.RESOURCE_NOT_FOUND.getMessage()));
+                        ErrorCatalog.CATEGORY_NOT_FOUND.getMessage())));
     }
 
     @Override
     public void delete(Integer id) {
         repository.deleteById(id);
-    }
-
-    private void validateCategoryFields(Category category) {
-        if (category.getCategoryName() == null || category.getCategoryName().isBlank()) {
-            throw new BadRequestException(ErrorCatalog.BAD_REQUEST.getMessage());
-        }
-
-        if (category.getDescription() == null || category.getDescription().isBlank()) {
-            throw new BadRequestException(ErrorCatalog.BAD_REQUEST.getMessage());
-        }
     }
 }

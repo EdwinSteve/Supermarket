@@ -1,8 +1,9 @@
 package org.example.supermarket.application.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.supermarket.application.dto.SupplierDto;
+import org.example.supermarket.application.mapper.SupplierMapper;
 import org.example.supermarket.domain.entity.Supplier;
-import org.example.supermarket.domain.exception.BadRequestException;
 import org.example.supermarket.domain.exception.SupplierNotFoundException;
 import org.example.supermarket.domain.repository.SupplierRepository;
 import org.example.supermarket.utils.ErrorCatalog;
@@ -12,32 +13,39 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class SupplierServiceImpl implements SupplierService {
+public class
+SupplierServiceImpl implements SupplierService {
     private final SupplierRepository repository;
+    private final SupplierMapper mapper;
 
     @Override
-    public List<Supplier> findAll() {
-        return repository.findAll();
+    public List<SupplierDto> findAll() {
+        return mapper.toDtoList(repository.findAll());
     }
 
     @Override
-    public Supplier findById(Integer id) {
+    public SupplierDto findById(Integer id) {
+        return mapper.toDto(repository.findById(id)
+                .orElseThrow(() -> new SupplierNotFoundException(
+                        ErrorCatalog.SUPPLIER_NOT_FOUND.getMessage())));
+    }
+
+    @Override
+    public Supplier getById(Integer id) {
         return repository.findById(id)
                 .orElseThrow(() -> new SupplierNotFoundException(
-                        ErrorCatalog.RESOURCE_NOT_FOUND.getMessage()));
+                        ErrorCatalog.SUPPLIER_NOT_FOUND.getMessage()));
     }
 
     @Override
-    public Supplier create(Supplier supplier) {
-        validateSupplierFields(supplier);
-        return repository.save(supplier);
+    public SupplierDto create(SupplierDto supplier) {
+        return mapper.toDto(repository.save(mapper.toEntity(supplier)));
     }
 
     @Override
-    public Supplier update(Integer id, Supplier supplier) {
-        return repository.findById(id)
+    public SupplierDto update(Integer id, SupplierDto supplier) {
+        return mapper.toDto(repository.findById(id)
                 .map(savedSupplier -> {
-                    validateSupplierFields(supplier);
                     savedSupplier.setCompanyName(supplier.getCompanyName());
                     savedSupplier.setCompanyTitle(supplier.getCompanyTitle());
                     savedSupplier.setContactName(supplier.getContactName());
@@ -46,33 +54,11 @@ public class SupplierServiceImpl implements SupplierService {
                     return repository.save(savedSupplier);
                 })
                 .orElseThrow(() -> new SupplierNotFoundException(
-                        ErrorCatalog.RESOURCE_NOT_FOUND.getMessage()));
+                        ErrorCatalog.SUPPLIER_NOT_FOUND.getMessage())));
     }
 
     @Override
     public void delete(Integer id) {
         repository.deleteById(id);
-    }
-
-    private void validateSupplierFields(Supplier supplier) {
-        if (supplier.getCompanyName() == null || supplier.getCompanyName().isBlank()) {
-            throw new BadRequestException(ErrorCatalog.BAD_REQUEST.getMessage());
-        }
-
-        if (supplier.getCompanyTitle() == null || supplier.getCompanyTitle().isBlank()) {
-            throw new BadRequestException(ErrorCatalog.BAD_REQUEST.getMessage());
-        }
-
-        if (supplier.getContactName() == null || supplier.getContactName().isBlank()) {
-            throw new BadRequestException(ErrorCatalog.BAD_REQUEST.getMessage());
-        }
-
-        if (supplier.getPhone() == null || supplier.getPhone().isBlank()) {
-            throw new BadRequestException(ErrorCatalog.BAD_REQUEST.getMessage());
-        }
-
-        if (supplier.getAddressSupplier() == null || supplier.getAddressSupplier().isBlank()) {
-            throw new BadRequestException(ErrorCatalog.BAD_REQUEST.getMessage());
-        }
     }
 }
