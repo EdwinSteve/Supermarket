@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<?import javax.swing.table.TableColumn?>
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" prefWidth="800" prefHeight="600">
+
+    <!-- Header -->
+    <top>
+        <Label text="Worker Management"
+               BorderPane.alignment="CENTER"
+               style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 10;" />
+    </top>
+
+    <!-- Form + Buttons -->
+    <left>
+        <VBox spacing="10.0" padding="20">
+            <children>
+
+                <Label text="Name:" />
+                <TextField fx:id="nameField" promptText="Full name" />
+
+                <Label text="Email:" />
+                <TextField fx:id="emailField" promptText="example@email.com" />
+
+                <Label text="DNI:" />
+                <TextField fx:id="dniField" promptText="National ID" />
+
+                <Label text="Role:" />
+                <TextField fx:id="roleField" promptText="e.g., Cashier, Manager" />
+
+                <HBox spacing="10">
+                    <children>
+                        <Button text="Create" fx:id="createButton" />
+                        <Button text="Edit" fx:id="editButton" />
+                        <Button text="Delete" fx:id="deleteButton" />
+                    </children>
+                </HBox>
+
+            </children>
+        </VBox>
+    </left>
+
+    <!-- Table -->
+    <center>
+        <TableView fx:id="workerTable" prefWidth="500">
+            <columns>
+                <TableColumn fx:id="colName" text="Name" prefWidth="120" />
+                <TableColumn fx:id="colEmail" text="Email" prefWidth="180" />
+                <TableColumn fx:id="colDni" text="DNI" prefWidth="100" />
+                <TableColumn fx:id="colRole" text="Role" prefWidth="100" />
+            </columns>
+        </TableView>
+    </center>
+
+    <!-- Footer -->
+    <bottom>
+        <Label text="Admin System - Powered by JavaFX"
+               BorderPane.alignment="CENTER"
+               style="-fx-font-size: 12px; -fx-padding: 10; -fx-text-fill: gray;" />
+    </bottom>
+
+</BorderPane>x
